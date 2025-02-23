@@ -1,0 +1,50 @@
+@page "/takequiz/{QuizId:int}"
+@using QuizApp.Shared.Models
+@inject HttpClient Http
+
+@code {
+    [Parameter]
+    public int QuizId { get; set; }
+
+    private Quiz quiz;
+    private int score = 0;
+    private int currentQuestionIndex = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Retrieve the quiz (including questions and answers) from the API.
+        quiz = await Http.GetFromJsonAsync<Quiz>($"api/quiz/{QuizId}");
+    }
+
+    private void SubmitAnswer(Answer selectedAnswer)
+    {
+        if (selectedAnswer.IsCorrect)
+        {
+            score++;
+        }
+        currentQuestionIndex++;
+    }
+}
+
+@if (quiz == null)
+{
+    <p>Loading quiz...</p>
+}
+else if (currentQuestionIndex < quiz.Questions.Count)
+{
+    <h3>@quiz.Questions[currentQuestionIndex].Text</h3>
+    <ul class="list-unstyled">
+        @foreach (var answer in quiz.Questions[currentQuestionIndex].Answers)
+        {
+            <li class="mb-2">
+                <button class="btn btn-outline-primary" @onclick="() => SubmitAnswer(answer)">
+                    @answer.Response
+                </button>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <h3>Your Score: @score / @(quiz.Questions.Count)</h3>
+}

@@ -1,0 +1,22 @@
+﻿@page "/"
+@using QuizApp.Shared.Models
+@inject HttpClient Http
+
+<h3>Available Quizzes</h3>
+<ul>
+    @foreach (var quiz in quizzes)
+    {
+        <li>
+            <NavLink class="nav-link" href=@($"/takequiz/{quiz.QuizId}")>@quiz.Title</NavLink>
+        </li>
+    }
+</ul>
+
+@code {
+    private List<Quiz> quizzes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        quizzes = await Http.GetFromJsonAsync<List<Quiz>>("api/quiz");
+    }
+}

@@ -1,0 +1,9 @@
+/* Ensure the navbar spans full width */
+.navbar {
+    width: 100%;
+}
+
+/* Add top padding to the body so page content does not hide behind the fixed-top navbar */
+body {
+    padding-top: 70px;
+}
